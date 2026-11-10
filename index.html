@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SGS BHOJPUR - Online Test</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #f1f5f9; color: #1e293b; min-height: 100vh; padding: 12px; }
+        .header { background: #1e3a8a; color: white; padding: 16px; border-radius: 12px; text-align: center; margin-bottom: 14px; }
+        .header h1 { font-size: 1.25rem; font-weight: 800; }
+        .header p { font-size: 0.85rem; opacity: 0.9; margin-top: 4px; }
+        .card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); max-width: 500px; margin: 0 auto; }
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-weight: 700; margin-bottom: 6px; font-size: 0.9rem; }
+        .input-field { width: 100%; padding: 12px; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; }
+        .btn-subject { width: 100%; display: block; padding: 15px; margin-bottom: 12px; border: none; border-radius: 10px; font-size: 1rem; font-weight: 700; color: white; cursor: pointer; text-align: center; }
+        .btn-phy { background: #2563eb; }
+        .btn-eng { background: #059669; }
+        .btn-math { background: #7c3aed; }
+        .btn-chem { background: #d97706; }
+        .btn-subject:active { opacity: 0.85; }
+        .quiz-top { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 12px; font-size: 0.95rem; }
+        .p-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+        .p-bar { height: 100%; background: #2563eb; width: 0%; transition: width 0.3s ease; }
+        .q-text { font-size: 1.05rem; font-weight: 700; line-height: 1.4; margin-bottom: 16px; }
+        .opt-btn { width: 100%; display: block; padding: 12px 14px; background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; font-weight: 600; margin-bottom: 10px; text-align: left; cursor: pointer; color: #1e293b; transition: all 0.2s; }
+        .opt-btn:disabled { cursor: not-allowed; opacity: 0.9; }
+        .opt-btn.correct { background: #dcfce7 !important; border-color: #16a34a !important; color: #166534 !important; }
+        .opt-btn.wrong { background: #fee2e2 !important; border-color: #dc2626 !important; color: #991b1b !important; }
+        .score-box { background: white; border: 3px solid #2563eb; border-radius: 14px; padding: 20px; text-align: center; max-width: 500px; margin: 0 auto; }
+        .score-val { font-size: 2.2rem; font-weight: 800; color: #2563eb; margin: 12px 0; }
+        .details-box { background: #f8fafc; border-radius: 8px; padding: 12px; text-align: left; font-size: 0.95rem; line-height: 1.8; margin-bottom: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>SGS BHOJPUR, DUMRAON</h1>
+        <p>Best Institute of Science • Mr. Sonu Sir</p>
+    </div>
+
+    <!-- 1. LOGIN SCREEN -->
+    <div id="screenLogin" class="card">
+        <div class="input-group">
+            <label>विद्यार्थी का नाम (Student Name):</label>
+            <input type="text" id="txtName" class="input-field" placeholder="उदा. Rahul Kumar">
+        </div>
+        <p style="font-weight: bold; margin-bottom: 12px; color: #64748b; font-size: 0.85rem;">नीचे विषय पर टच करके टेस्ट शुरू करें:</p>
+        <button type="button" class="btn-subject btn-phy" onclick="runSubject('physics')">1. भौतिकी (Physics) - 50 प्रश्न</button>
+        <button type="button" class="btn-subject btn-eng" onclick="runSubject('english')">2. English (A Pinch of Snuff) - 50 Qs</button>
+        <button type="button" class="btn-subject btn-math" onclick="runSubject('math')">3. गणित (Matrices) - 50 प्रश्न</button>
+        <button type="button" class="btn-subject btn-chem" onclick="runSubject('chemistry')">4. रसायन (Electrochemistry) - 50 प्रश्न</button>
+    </div>
+
+    <!-- 2. QUIZ SCREEN -->
+    <div id="screenQuiz" class="card" style="display: none;">
+        <div class="quiz-top">
+            <span id="txtQIndex">प्रश्न: 1 / 50</span>
+            <span id="txtTimer" style="color: #dc2626;">50:00</span>
+        </div>
+        <div class="p-bar-bg">
+            <div id="barProgress" class="p-bar"></div>
+        </div>
+        <div id="txtQuestion" class="q-text"></div>
+        <div id="boxOptions"></div>
+    </div>
+
+    <!-- 3. RESULT SCREEN -->
+    <div id="screenResult" class="score-box" style="display: none;">
+        <h3 style="color: #1e3a8a;">SGS BHOJPUR, DUMRAON</h3>
+        <p style="font-size: 0.8rem; color: #64748b; font-weight: bold;">OFFICIAL SCORE CARD</p>
+        <div class="score-val" id="txtScore">0 / 50</div>
+        <div class="details-box">
+            <div><strong>विद्यार्थी का नाम:</strong> <span id="resName"></span></div>
+            <div><strong>विषय:</strong> <span id="resSubject"></span></div>
+            <div><strong>तारीख:</strong> <span id="resDate"></span></div>
+            <div><strong>प्राप्तांक प्रतिशत:</strong> <span id="resPercent"></span>%</div>
+        </div>
+        <p style="color: #059669; font-weight: bold;">📸 इसका स्क्रीनशॉट लेकर सर को भेजें।</p>
+        <button type="button" class="btn-subject btn-phy" style="margin-top:15px;" onclick="location.reload()">होम पेज पर जाएँ</button>
+    </div>
+
+    <script>
+        // प्रश्न का डाटा
+        var testData = {
+            physics: [
+                {q:"विद्युत धारा का SI मात्रक है", o:["वोल्ट", "कूलॉम", "ओम", "एम्पियर"], a:3},
+                {q:"विद्युत धारा एक राशि है", o:["ध्रुवीय सदिश", "टेन्सर", "अदिश", "सदिश"], a:2},
+                {q:"ओम के नियम में V/I नियतांक को कहते हैं", o:["प्रतिरोधकता", "प्रतिरोध", "चालकता", "धारिता"], a:1},
+                {q:"प्रतिरोधकता (ρ) का SI मात्रक है", o:["म्हो", "ओम-मीटर", "ओम/मीटर", "ओम"], a:1},
+                {q:"चालकता का SI मात्रक है", o:["सीमेन", "वोल्ट", "ओम-मीटर", "ओम"], a:0}
+            ],
+            english: [
+                {q:"'A Pinch of Snuff' was written by", o:["Ruskin Bond", "Manohar Malgonkar", "R. K. Narayan", "Khushwant Singh"], a:1},
+                {q:"'A Pinch of Snuff' is a", o:["comic story", "tragic play", "biography", "travel essay"], a:0},
+                {q:"The story is taken from", o:["Flamingo", "Malgudi Days", "Vistas", "Contemporary Indian Short Stories"], a:3},
+                {q:"Nanukaka is the narrator's", o:["paternal uncle", "brother", "maternal uncle", "grandfather"], a:2}
+            ],
+            math: [
+                {q:"|adj A| (2×2 आव्यूह) =", o:["2|A|", "|A|", "|A|^2", "|A|^3"], a:1},
+                {q:"det(A^-1) =", o:["det(A)", "1 / det(A)", "1", "0"], a:1},
+                {q:"|adj A| (3×3 आव्यूह) =", o:["|A|", "|A|^2", "|A|^3", "3|A|"], a:1},
+                {q:"[1 2] × [[1],[2]] =", o:["[5]", "[[5,0],[0,5]]", "[14]", "कोई नहीं"], a:0}
+            ],
+            chemistry: [
+                {q:"फैराडे का विद्युत अपघटन नियम निम्न में से किससे सम्बंधित है?", o:["धनायन के परमाणु भार से", "ऋणायन के परमाणु भार से", "इलेक्ट्रोलाइट के समतुल्य भार से", "इनमे से कोई नहीं"], a:2},
+                {q:"गैल्वेनिक सेल में एनोड होता है:", o:["ऋणात्मक इलेक्ट्रोड", "धनात्मक इलेक्ट्रोड", "उदासीन इलेक्ट्रोड", "कोई नहीं"], a:0}
+            ]
+        };
+
+        // वेरिएबल्स (Variables)
+        var quizQuestions = [];
+        var activeIdx = 0;
+        var totalScore = 0;
+        var currentSubjectTitle = "";
+        var studentNameVal = "";
+        var timerInterval;
+
+        // विषय शुरू करने का फंक्शन
+        function runSubject(subjectKey) {
+            var nameInput = document.getElementById("txtName").value.trim();
+            if (nameInput === "") {
+                alert("कृपया टेस्ट शुरू करने से पहले अपना नाम दर्ज करें!");
+                return;
+            }
+
+            studentNameVal = nameInput;
+            quizQuestions = testData[subjectKey];
+
+            if(!quizQuestions || quizQuestions.length === 0) {
+                alert("इस विषय के प्रश्न अभी उपलब्ध नहीं हैं!");
+                return;
+            }
+
+            // विषय का नाम सेट करें
+            if(subjectKey === 'physics') currentSubjectTitle = "भौतिकी (Physics)";
+            else if(subjectKey === 'english') currentSubjectTitle = "English";
+            else if(subjectKey === 'math') currentSubjectTitle = "गणित (Math)";
+            else if(subjectKey === 'chemistry') currentSubjectTitle = "रसायन (Chemistry)";
+
+            // स्क्रीन बदलें
+            document.getElementById("screenLogin").style.display = "none";
+            document.getElementById("screenQuiz").style.display = "block";
+
+            // टेस्ट शुरू करें
+            activeIdx = 0;
+            totalScore = 0;
+            startTimer();
+            loadQuestion();
+        }
+
+        // प्रश्न लोड करने का फंक्शन
+        function loadQuestion() {
+            if (activeIdx >= quizQuestions.length) {
+                showResult();
+                return;
+            }
+
+            var qData = quizQuestions[activeIdx];
+            var totalQ = quizQuestions.length;
+
+            // UI अपडेट करें
+            document.getElementById("txtQIndex").innerText = "प्रश्न: " + (activeIdx + 1) + " / " + totalQ;
+            document.getElementById("barProgress").style.width = ((activeIdx / totalQ) * 100) + "%";
+            document.getElementById("txtQuestion").innerText = qData.q;
+
+            // विकल्प (Options) बनायें
+            var optionsHtml = "";
+            for (var i = 0; i < qData.o.length; i++) {
+                optionsHtml += '<button class="opt-btn" onclick="checkAnswer(' + i + ', ' + qData.a + ', this)">' + qData.o[i] + '</button>';
+            }
+            document.getElementById("boxOptions").innerHTML = optionsHtml;
+        }
+
+        // उत्तर चेक करने का फंक्शन
+        function checkAnswer(selectedIdx, correctIdx, btnElement) {
+            var allBtns = document.getElementById("boxOptions").getElementsByTagName("button");
+            
+            // सारे बटन डिसएबल (Disable) करें ताकि बच्चा दोबारा क्लिक ना कर सके
+            for (var i = 0; i < allBtns.length; i++) {
+                allBtns[i].disabled = true;
+                if (i === correctIdx) {
+                    allBtns[i].classList.add("correct"); // सही वाले को हरा रंग दें
+                }
+            }
+
+            // स्कोर जोड़ें या गलत को लाल करें
+            if (selectedIdx === correctIdx) {
+                totalScore++;
+            } else {
+                btnElement.classList.add("wrong");
+            }
+
+            // 1 सेकंड बाद अगला प्रश्न लोड करें
+            setTimeout(function() {
+                activeIdx++;
+                loadQuestion();
+            }, 1000);
+        }
+
+        // रिजल्ट दिखाने का फंक्शन
+        function showResult() {
+            clearInterval(timerInterval); // टाइमर रोक दें
+            document.getElementById("screenQuiz").style.display = "none";
+            document.getElementById("screenResult").style.display = "block";
+
+            var totalQ = quizQuestions.length;
+            var percent = Math.round((totalScore / totalQ) * 100);
+            var today = new Date().toLocaleDateString('en-IN'); // आज की तारीख
+
+            document.getElementById("txtScore").innerText = totalScore + " / " + totalQ;
+            document.getElementById("resName").innerText = studentNameVal;
+            document.getElementById("resSubject").innerText = currentSubjectTitle;
+            document.getElementById("resDate").innerText = today;
+            document.getElementById("resPercent").innerText = percent;
+            
+            // रिजल्ट स्क्रीन का प्रोग्रेस बार 100% कर दें
+            document.getElementById("barProgress").style.width = "100%";
+        }
+
+        // 50 मिनट का टाइमर
+        function startTimer() {
+            var totalSeconds = 50 * 60; // 50 मिनट
+            var timerDisplay = document.getElementById("txtTimer");
+            
+            timerInterval = setInterval(function() {
+                var minutes = Math.floor(totalSeconds / 60);
+                var seconds = totalSeconds % 60;
+                
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                
+                timerDisplay.innerText = minutes + ":" + seconds;
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("समय समाप्त! आपका टेस्ट आटोमेटिक सबमिट हो रहा है।");
+                    showResult();
+                } else {
+                    totalSeconds--;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+  </html>
+  
